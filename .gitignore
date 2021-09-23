@@ -1,5 +1,4 @@
-__pycache__/
-build/
-dist/
-src/compactobjects.egg-info/
-test.py~
+/__pycache__
+/build
+/dist
+/src/compactobjects.egg-info
