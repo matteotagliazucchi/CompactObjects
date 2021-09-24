@@ -18,33 +18,38 @@ The package works with different type eos:
 
 ## Installation
 
-Clone the repository in your home
+Place in your favorite folder.
+Clone the repository in it
 
-1. `git clone `
+1. `git clone https://github.com/matteotagliazucchi/CompactObjects.git`
 
-If you want you can create a virtual environment, called `virtual_env` where install the package:
+Then:
 
-2. `python3 -m venv virtual_env`
+2. `cd CompactObjects`
+
+If you want you can create a virtual environment (`virtual_env`) where install the package:
+
+3. `python3 -m venv virtual_env`
 
 where `virtual_env` can be replaced by `/path/to/directory/virtual_env` in the case you want the virtual envirnoment in the directory `/path/to/directory/`.
-In the case you created a virtual environment, activate it:
+If you created a virtual environment, activate it:
 
-3. `source virtual_env/bin/activate` or `source /path/to/directory/virtual_env/bin/activate`
+4. `source virtual_env/bin/activate` or `source /path/to/directory/virtual_env/bin/activate`
 
 Then proceed installing the package (the package will be installed only in the virtual environment, if you created one and you activated it). 
 Installation steps are:
 
-4. `python -m pip install -r ./requirements.txt`
+5. `python -m pip install -r ./requirements.txt`
 
 to install the prerequisites and then
 
-5. `python setup.py install`
+6. `python setup.py install`
 
 or for installing in development mode:
 
-6. `python setup.py develop`
+7. `python setup.py develop`
 
-If you want to install the package in your base python environemnt, ignore steps 2 and 3.
+If you want to install the package in your base python environemnt, ignore steps 3 and 4.
 
 ## Uninstallation
 
