@@ -74,7 +74,7 @@ Then you can plot or do whatever you want.
 ## How to run tests
 
 Follow installation steps. Eventually, remember to activate the virtual environment where you installed the package. 
-Then, go inside the folder `CompactObjects/tests`. If you want to run a test on pure neutron stars, entr in the folder `PureNS`. Then open the terminal and run:
+Then, go inside the folder `CompactObjects/tests`. If you want to run a test on pure neutron stars, enter in the folder `PureNS`. Then open the terminal and run:
 
 - `python nonrel_purens.py`
 
@@ -82,7 +82,7 @@ or
 
 - `python rel_purens.py`
 
-Some results will be printed on the terminal, while plots will be available in the folder `NSOutput`.
+Some results will be printed on the terminal, while plots will be available in the folder `NSOutput`
 
 ## References
 
