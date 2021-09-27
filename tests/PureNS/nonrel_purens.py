@@ -43,6 +43,8 @@ p0 = e0 *1e-5
 eos = cobj.PolytropicEos(k, gamma) 
 ns = cobj.CompactStar(eos)
 
+ns.set_radii_range(np.arange(1e-6, 1e5, 0.1))
+
 r_newton , m_newton, p_newton = ns.structure_solver('Newton', p0)
 R_newton = r_newton[-1]
 M_newton= m_newton[-1]
@@ -87,7 +89,7 @@ fig.savefig(results_dir+'nrns_mp-vs-r.png',
 
 p0_min = 1e30*conversion_dict['cgs']['pressure']['geom']
 p0_max = 1e33*conversion_dict['cgs']['pressure']['geom']
-pressures = np.linspace(p0_min, p0_max, 500)
+pressures = np.linspace(p0_min, p0_max, 200)
 
 R_star_tov, M_star_tov = ns.mass_vs_radius('TOV', pressures)
 R_star_newton, M_star_newton = ns.mass_vs_radius('Newton', pressures)
@@ -120,6 +122,6 @@ ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_tov, color
 ax2.set_ylabel(r"R [$km$]",fontsize=14)
 
 fig.legend(loc='center right', bbox_to_anchor=(1,0.5), bbox_transform=ax.transAxes)
-fig.savefig(results_dir+'relns_mr-vs-p0.png',
+fig.savefig(results_dir+'nrns_mr-vs-p0.png',
             format='png',
             dpi=1000)

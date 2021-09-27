@@ -40,13 +40,13 @@ p0 = 2.488e22 * conversion_dict['cgs']['pressure']['geom']
 eos = cobj.PolytropicEos(k, gamma)
 
 wd = cobj.CompactStar(eos)
-wd.change_radii_range(5e7)
+wd.set_radii_range(np.linspace(1e-3, 5e7, int(1e6)))
 
-r_newton , m_newton, p_newton = wd.structure_solver('Newton', p0)
+r_newton , m_newton, p_newton = wd.structure_solver('Newton', p0, max_step = 10)
 R_newton = r_newton[-1]
 M_newton = m_newton[-1]
 
-r_tov , m_tov, p_tov = wd.structure_solver('TOV', p0)
+r_tov , m_tov, p_tov = wd.structure_solver('TOV', p0, max_step = 10)
 R_tov = r_tov[-1]
 M_tov = m_tov[-1]
 
@@ -107,7 +107,7 @@ fig.savefig(results_dir+'nrwd_mass-vs-radius.png',
 # plot Mass/Radius - central pressure 
 
 fig,ax = plt.subplots()
-plt.title("Mass/Radius vs Central Pressure in a pure non relativistic NS")
+plt.title("Mass/Radius vs Central Pressure in a non relativistic Fermi gas WD")
 ax.set_xscale('log')
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_newton, color="blue", linestyle="-.", linewidth=1, label = 'M-Newton')
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_tov, color="black", linestyle="-.", linewidth=2,  label = 'M-TOV')
@@ -121,6 +121,6 @@ ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_tov, color
 ax2.set_ylabel(r"R [$km$]",fontsize=14)
 
 fig.legend(loc='center right', bbox_to_anchor=(1,0.5), bbox_transform=ax.transAxes)
-fig.savefig(results_dir+'relns_mr-vs-p0.png',
+fig.savefig(results_dir+'nonrelwd_mr-vs-p0.png',
             format='png',
             dpi=1000) 
