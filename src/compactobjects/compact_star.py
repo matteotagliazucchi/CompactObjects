@@ -97,7 +97,7 @@ class CompactStar (object):
   
     def set_initial_conditions(self, central_pressure): 
         """
-        Utility to set initial condition.
+        Utility to set initial conditions.
 
         Parameters:
         ===========
@@ -203,10 +203,10 @@ class CompactStar (object):
 
         return R_star, M_star
 
-# END OF CompactStar
+# END OF CompactStar class
 #===================================================================================#
 
-# External function used to find where pressure goed under a certain value
+# External function used to find when pressure goes under a certain value
 
 def found_radius(t, y, central_pressure):
     """

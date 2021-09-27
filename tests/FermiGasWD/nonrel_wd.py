@@ -31,7 +31,9 @@ if not os.path.isdir(results_dir):
 #   MAIN FOR THE POLYTROPIC CASES   #
 #####################################
 
-# non relativistic polytropic case with a tabulated central pressure
+# MAIN FOR NON RELATIVISTIC POLYTROPIC CASE
+
+# Build only a star with a tabulated value of central pressure
 
 gamma = 5/3
 k = 3.309e-23 *(conversion_dict['cgs']['lenght']['m']**2)*(conversion_dict['cgs']['energy']['geom'])**(-2/3)

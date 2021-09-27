@@ -7,7 +7,6 @@ from .bisection import bisection
 class ImplicitEos (object):
 
     def __init__(self, energy_fermi_momentum, pressure_fermi_momentum):
-
         """
         Class that, given the explicit expression of the energy and the pressure 
         in function of x = k_f/(m*c), where k_f is the Fermi momentum,

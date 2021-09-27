@@ -31,13 +31,14 @@ if not os.path.isdir(results_dir):
 #   MAIN FOR THE POLYTROPIC CASES   #
 #####################################
 
-# main relativistic polytropic case
+# MAIN FOR THE RELATIVISTIC POLYTROPIC CASE
+
+# Build only a star with a tabulated value of central pressure
 
 gamma = 4/3
 e0 = 7.463e39 * conversion_dict['cgs']['pressure']['geom'] 
 k = 1/(e0**(gamma -1))
 p0 = e0*1e-14
-
 
 eos = cobj.PolytropicEos(k, gamma)
 

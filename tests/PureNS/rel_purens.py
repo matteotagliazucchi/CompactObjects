@@ -33,7 +33,7 @@ if not os.path.isdir(results_dir):
 
 # FULL RELATIVITISTIC CASE
 
-#  Build only a star with a tabulated value of pressure
+#  Build only a star with a tabulated value of central pressure
 
 e0 = (m_n**4)*(C_SI**5)
 e0 = e0/((pi**2)*(HBAR_SI**3))
@@ -50,11 +50,11 @@ ns.set_radii_range(np.arange(1e-6, 1e5, 0.1))
 
 p0 = 3.5e35*conversion_dict['cgs']['pressure']['geom']
 
-r_newton, m_newton, p_newton = ns.structure_solver('Newton', p0, max_step = 1)# need to have a fine step for the rel case
+r_newton, m_newton, p_newton = ns.structure_solver('Newton', p0, max_step = 1)# need to have a finer step in the rel case
 R_newton = r_newton[-1]
 M_newton = m_newton[-1]
 
-r_tov, m_tov, p_tov = ns.structure_solver('TOV', p0, max_step = 1)# need to have a fine step for the rel case
+r_tov, m_tov, p_tov = ns.structure_solver('TOV', p0, max_step = 1)# need to have a finer step in the rel case
 R_tov = r_tov[-1]
 M_tov = m_tov[-1]
 
@@ -105,13 +105,13 @@ R_star_newton, M_star_newton = ns.mass_vs_radius('Newton', pressures)
 
 pressures = np.linspace(p0_2, p0_3, 375)
 
-R_star_tov, M_star_tov = np.append(ns.mass_vs_radius('TOV', pressures, max_step = 1))# need to have a fine step for the rel case
-R_star_newton, M_star_newton = np.append(ns.mass_vs_radius('Newton', pressures, max_step = 1))# need to have a fine step for the rel case
+R_star_tov, M_star_tov = np.append(ns.mass_vs_radius('TOV', pressures, max_step = 1))# need to have a fine step in the rel case
+R_star_newton, M_star_newton = np.append(ns.mass_vs_radius('Newton', pressures, max_step = 1))# need to have a fine step in the rel case
 
 pressures = np.linspace(p0_3, p0_4, 75)
 
-R_star_tov, M_star_tov = np.append(ns.mass_vs_radius('TOV', pressures, max_step = 0.1)) # need a finer step for the ultra rel case
-R_star_newton, M_star_newton = np.append(ns.mass_vs_radius('Newton', pressures, max_step = 0.1))# need a finer step for the ultra rel case
+R_star_tov, M_star_tov = np.append(ns.mass_vs_radius('TOV', pressures, max_step = 0.1)) # need a finer step in the ultra rel case
+R_star_newton, M_star_newton = np.append(ns.mass_vs_radius('Newton', pressures, max_step = 0.1))# need a finer in for the ultra rel case
 
 # plot Mass-Radius
 

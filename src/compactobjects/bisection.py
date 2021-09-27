@@ -1,7 +1,8 @@
 import numpy as np
 
 def bisection(func,a,b,N):
-    '''Approximate solution of f(x)=0 on interval [a,b] by bisection method.
+    '''
+    Approximate solution of f(x)=0 on interval [a,b] by bisection method.
 
     Parameters
     ===========

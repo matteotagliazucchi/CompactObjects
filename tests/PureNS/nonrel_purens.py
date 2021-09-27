@@ -33,7 +33,7 @@ if not os.path.isdir(results_dir):
 
 # POLYTROPIC NON RELATIVITISTIC CASE
 
-#  Build only a star with a tabulated value of pressure
+#  Build only a star with a tabulated value of central pressure
 
 gamma = 5/3
 k = 6.483e-26*(conversion_dict['cgs']['lenght']['m']**2)*(conversion_dict['cgs']['energy']['geom'] ** (-2/3)) 
