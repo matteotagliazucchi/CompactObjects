@@ -88,8 +88,8 @@ ax2.minorticks_on()
 
 fig.legend(loc="upper center", bbox_to_anchor=(0.5,1), bbox_transform=ax.transAxes)
 plt.rcParams["savefig.bbox"] = "tight"
-fig.savefig(results_dir+'relns_mp-vs-r.png',
-            format='png',
+fig.savefig(results_dir+'relns_mp-vs-r.pdf',
+            format='pdf',
             dpi=1000)
 
 #  Build a sequence of 500 stars. 
@@ -115,8 +115,8 @@ ax.minorticks_on()
 
 fig.legend(loc='upper right')
 plt.rcParams["savefig.bbox"] = "tight"
-fig.savefig(results_dir+'relns_mass-vs-radius.png',
-            format='png',
+fig.savefig(results_dir+'relns_mass-vs-radius.pdf',
+            format='pdf',
             dpi=1000)
 
 # plot Mass/Radius - central pressure 
@@ -140,6 +140,6 @@ ax2.set_ylabel(r"R [$km$]",fontsize=14)
 
 fig.legend(loc='center right', bbox_to_anchor=(1,0.5), bbox_transform=ax.transAxes)
 plt.rcParams["savefig.bbox"] = "tight"
-fig.savefig(results_dir+'relns_mr-vs-p0.png',
-            format='png',
+fig.savefig(results_dir+'relns_mr-vs-p0.pdf',
+            format='pdf',
             dpi=1000)

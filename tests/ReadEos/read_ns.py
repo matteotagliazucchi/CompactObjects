@@ -81,8 +81,8 @@ ax2.minorticks_on()
 
 fig.legend(loc="upper center", bbox_to_anchor=(0.5,1), bbox_transform=ax.transAxes)
 plt.rcParams["savefig.bbox"] = "tight"
-fig.savefig(results_dir+'sly_mp-vs-r.png',
-            format='png',
+fig.savefig(results_dir+'sly_mp-vs-r.pdf',
+            format='pdf',
             dpi=1000)
 
 #  Build a sequence of 200 stars.
@@ -108,8 +108,8 @@ ax.set_ylabel(r"$\epsilon$ [$erg/cm^3$]", fontsize=14)
 
 fig.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 plt.rcParams["savefig.bbox"] = "tight"
-fig.savefig(results_dir+'eos.png',
-            format='png',
+fig.savefig(results_dir+'eos.pdf',
+            format='pdf',
             dpi=1000) 
 
 # solving structure eqs
@@ -124,8 +124,8 @@ ax.set_xlabel('R [km]',fontsize=14)
 ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
 ax.minorticks_on()
 plt.rcParams["savefig.bbox"] = "tight"
-fig.savefig(results_dir+'sly_mass-vs-radius.png',
-            format='png',
+fig.savefig(results_dir+'sly_mass-vs-radius.pdf',
+            format='pdf',
             dpi=1000)
 
 # plot Mass/Radius - central density 
@@ -147,8 +147,8 @@ ax2.set_ylabel(r"R [$km$]",fontsize=14)
 
 fig.legend(loc='center right', bbox_to_anchor=(1,0.5), bbox_transform=ax.transAxes)
 plt.rcParams["savefig.bbox"] = "tight"
-fig.savefig(results_dir+'sly_mr-vs-p0.png',
-            format='png',
+fig.savefig(results_dir+'sly_mr-vs-p0.pdf',
+            format='pdf',
             dpi=1000)
 
 ########################
