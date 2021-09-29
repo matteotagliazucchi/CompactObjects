@@ -93,6 +93,10 @@ or
 Some results will be printed on the terminal, while plots will be available in the folder `NSOutput`.
 A similar procedure holds also for the other tests.
 
+## Acknowledgements
+
+I would like to thank Janko Petković and Lorenzo Squadrani for helping me in the comprehension of virtual environments and of `setup.py` files.
+
 ## References
 
 For the physics used in this package see 
