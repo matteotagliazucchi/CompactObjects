@@ -1,8 +1,9 @@
 import sys
 
 from .compact_star import CompactStar
-from .eos import ImplicitEos, PolytropicEos
-from .constants import *
+from .eos import ImplicitEos, PressureEdenPolytropic, PressureDensityPolytropic, PressureDensityPiecewise
+from .utils import conversion_dict, eos_lib
+from .read_eos import glue_crust_core_eos
 
 if sys.version_info < (3,):
     raise ImportError(

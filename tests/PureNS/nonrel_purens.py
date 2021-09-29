@@ -40,7 +40,7 @@ k = 6.483e-26*(conversion_dict['cgs']['lenght']['m']**2)*(conversion_dict['cgs']
 e0 = 1.603e38 * conversion_dict['cgs']['pressure']['geom'] 
 p0 = e0 *1e-5
 
-eos = cobj.PolytropicEos(k, gamma) 
+eos = cobj.PressureEdenPolytropic(k, gamma) 
 ns = cobj.CompactStar(eos)
 
 ns.set_radii_range(np.arange(1e-6, 1e5, 0.1))
@@ -64,6 +64,7 @@ print('=========================================================')
 # create a figure of m(r) and P(r)
 
 fig,ax = plt.subplots()
+plt.rc('font', family='monospace')
 plt.text(0.5, 1.07, "P(r) & m(r) of a pure non relativistic neutron star",
          horizontalalignment='center',
          fontsize=12,
@@ -72,8 +73,10 @@ ax.plot(r_newton, p_newton, color="blue", linestyle="-", linewidth=1, label = 'P
 ax.plot(r_tov, p_tov, color="black", linestyle="-", linewidth=2,  label = 'P TOV')
 ax.set_xlabel('r [km]',fontsize=14)
 ax.set_ylabel(r'P [$dyne/cm^2$]', fontsize=14)
+ax.minorticks_on()
 
 ax2 = ax.twinx()
+ax2.minorticks_on()
 ax2.plot(r_newton, m_newton,color="blue", linestyle=":", label = 'm Newton')
 ax2.plot(r_tov, m_tov, color="black", linestyle="-.", label = 'm TOV')
 ax2.plot(R_newton, M_newton, marker = 'o', color='green', label='NS Newton mass')
@@ -81,6 +84,7 @@ ax2.plot(R_tov, M_tov, marker = 'o', color='red', label='NS TOV mass')
 ax2.set_ylabel(r"m [$M_{\odot}$]",fontsize=14)
 
 fig.legend(loc="upper center", bbox_to_anchor=(0.5,1), bbox_transform=ax.transAxes)
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'nrns_mp-vs-r.png',
             format='png',
             dpi=1000)
@@ -96,20 +100,26 @@ R_star_newton, M_star_newton = ns.mass_vs_radius('Newton', pressures)
 # plot Mass-Radius
 
 fig,ax = plt.subplots()
+plt.rc('font', family='monospace')
 plt.title("Mass-Radius of a pure non relativistic NS")
 ax.plot(R_star_newton, M_star_newton, color="blue", linestyle="-.", linewidth=1, label = 'Newton')
 ax.plot(R_star_tov, M_star_tov, color="black", linestyle="-.", linewidth=2,  label = 'TOV')
 ax.set_xlabel('R [km]',fontsize=14)
 ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
-ax.legend(loc='upper right')
+ax.minorticks_on()
+
+fig.legend(loc='upper right', bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'nrns_mass-vs-radius.png',
             format='png',
             dpi=1000)
 
 # plot Mass/Radius - central pressure 
 fig,ax = plt.subplots()
+plt.rc('font', family='monospace')
 plt.title("Mass/Radius vs Central Pressure in a pure non relativistic NS")
 ax.set_xscale('log')
+ax.minorticks_on()
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_newton, color="blue", linestyle="-.", linewidth=1, label = 'M-Newton')
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_tov, color="black", linestyle="-.", linewidth=2,  label = 'M-TOV')
 ax.set_xlabel('p0 [$dyne/cm^2$]',fontsize=14)
@@ -117,11 +127,13 @@ ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
 
 ax2 = ax.twinx()
 ax2.set_xscale('log')
+ax2.minorticks_on()
 ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_newton, color="blue", linestyle=":", linewidth=1, label = 'R-Newton')
 ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_tov, color="black", linestyle=":", linewidth=2,  label = 'R-TOV')
 ax2.set_ylabel(r"R [$km$]",fontsize=14)
 
-fig.legend(loc='center right', bbox_to_anchor=(1,0.5), bbox_transform=ax.transAxes)
+fig.legend(loc='upper center', bbox_to_anchor=(0.5,1), bbox_transform=ax.transAxes)
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'nrns_mr-vs-p0.png',
             format='png',
             dpi=1000)

@@ -1,26 +1,37 @@
 import numpy as np 
 from scipy.integrate import solve_ivp
 from .bisection import bisection
-from .constants import  *
+from .utils import  *
 
 class CompactStar (object):
 
-    def __init__ (self, eos):
+    def __init__ (self, eos, value_type = 'Pressure'):
         """
-        Given an eos return mass and radius of the star (given also an external central pressure).
+        Given an eos return mass and radius of the star (given also an external central pressure/density).
 
         Parameters
         ==========
         eos: callable function
             polytropicEOS() instance
+        value_type : str
+            'Pressure' or 'Density' depending id we provide a central pressure or a central density
         radii = array of float
             range of radii where to search the real radius of the star via tov eqs.
             this range must contain the expected radius of the star: for a ns we must have 
-            100 km (1e5 m) as maximum radius, while for a white dwarf we shold have 5e7 km.
+            25 km (25e3 m) as maximum radius, while for a white dwarf we shold have 5e7 km.
             range expressed in geom units, i.e in meters. Default value set to work with Neutron Stars.
         """       
-        self.radii = np.arange(1e-3,1e5,0.1) # in m (geom); default value
+        self.radii = np.arange(1e-3,25e3,1) # in m (geom); default value
         self.eos = eos
+        self.set_integration_options()
+        if value_type == 'Pressure': 
+            self.value_type = value_type 
+        elif value_type == 'Density':
+            if self.eos.type == 'ImplicitEos' or self.eos.type == 'PressureEdenPolytropic':
+                raise ValueError('No support for density ad central value in ', self.eos.type, ' class.')
+            self.value_type = value_type 
+        else :
+            raise ValueError('CompactStar works only if you provide a central value of Pressure or Density')
 
     def set_radii_range (self, radii):
         """
@@ -60,7 +71,9 @@ class CompactStar (object):
         # Set the RHS
         dy = np.zeros(len(y))
         dy[0] = 4*pi*eden*r**2
-        dy[1] = -(eden+p)*(m + 4*pi*r**3*p)/(r*(r-2*m))
+        #dy[1] = -G_CGS*(eden+p/C_CGS**2)*(m + 4*pi*r**3*p/C_CGS**2)/(r*(r-2*G_CGS*m/C_CGS**2))
+        dy[1] = - (eden+p)*(m + 4*pi*r**3*p)/(r*(r-2*m))
+
         return dy
 
     def newton_eqs(self, r, y):
@@ -81,7 +94,6 @@ class CompactStar (object):
         ----------
         NOTES: eden : obtained from sels.eos.eden_from_pressure(y[1])
         """
-
         # some clever name
         m, p = y
 
@@ -95,39 +107,52 @@ class CompactStar (object):
 
         return dy
   
-    def set_initial_conditions(self, central_pressure): 
+    def set_initial_conditions(self, central_value): 
         """
         Utility to set initial conditions.
 
         Parameters:
         ===========
-        - central_pressure : float
-            pressure at r = r_min
+        central_value : float
+            pressure or density at r = r_min
         -----------
-        - m0, p0: float
+        m0, p0: float
                 initial mass and central pressure
         """
-        p0 = central_pressure
+        if self.value_type == 'Density':
+            rho0 = central_value
+            p0 = self.eos.pressure_from_density(rho0)
+        else: 
+            p0 = central_value
         e0 = self.eos.eden_from_pressure(p0)
         m0 = 4.*pi*e0*self.radii[0]**3 
         return m0, p0
 
-    def structure_solver(self, eqs_type, central_pressure, max_step = None):
+    def set_integration_options (self, method = 'RK45', rtol = 1.0e-4 , 
+                atol = 0.0,  max_step = np.inf, dense_output = False):
+        self.max_step = max_step
+        self.method = method
+        self.rtol = rtol
+        self.atol = atol
+        self.dense_output = dense_output
+
+    def structure_solver(self, eqs_type, central_value):
         """
         Solve structure equations given a central pressure.
 
         Parameters:
         ===========
-        p0 : float
-            central pressure
+        central_value : float
+            pressure or density at r = r_min
         eqs_type : string
             specify if we solve TOV or Newton eqs. Must be 'TOV' or 'Newton'
+        max_step : float
+            max step allowed for solve_ivp
         -----------
         r_out, p_out, m_out : array of floats
             p(r) and m(r) of the star with the given central pressure. 
             Last values of these arrays are the Radius, the Mass and the pressure at the surface of the star
         """
-
         eqs_dict = { 'Newton' : self.newton_eqs,
                      'TOV' : self.tov_eqs
                 }
@@ -140,86 +165,82 @@ class CompactStar (object):
         #(found_radius il called only inside this function so it's ok)
         
         if self.eos.type == 'ImplicitEos' : 
-            # we change the default fermi energy momenta range for eos in order to surely include all the pressures
-            pressure_shifted = lambda x : self.eos.pressure_fermi_momentum(x) - central_pressure
-            x_p = bisection(pressure_shifted, 0, 1e3, int(1e3))
-            x_new = np.linspace(-int(x_p)-1, int(x_p)+1, 1000)
-            self.eos.set_x_range(x_new)
+            # too heavy in case of implicit eos to look for zero pressure, which never occurs
+            stop = lambda r,y : self.found_radius_implicit(r, y, central_value) 
+            stop.terminal = True  
+        else: 
+            stop = lambda r,y : self.found_radius(r, y)
+            stop.terminal = True  
 
-        initial = self.set_initial_conditions(central_pressure)
-        r_span = [self.radii[0], self.radii[-1]]
+        initial = self.set_initial_conditions(central_value)
         
-        if max_step is not None:
-            max_step = max_step
-        else: max_step = np.inf # default value of solve_ivp
-
-        # we use a lambda function trick to pass central_pressure to 'events'
-        # we set the 'terminal' attribute of found_radius to be True to stop integration properly
-       
-        stop = lambda r,y : found_radius(r, y, central_pressure)
-        stop.terminal = True
-
-        solutions = solve_ivp(eqs_dict[eqs_type], r_span, initial, method = 'RK45', max_step = max_step,
-                events = stop)
-
-        r_out = solutions.t *conversion_dict['geom']['lenght']['km']
-        m_out = solutions.y[0] *conversion_dict['geom']['mass']['m_sol'] 
+        r_span = [self.radii[0], self.radii[-1]]        
+        
+        solutions = solve_ivp(eqs_dict[eqs_type], r_span, initial, method = self.method , rtol = self.rtol,
+                    atol=self.atol, max_step = self.max_step, dense_output = self.dense_output, events = stop)
+        
+        r_out = solutions.t*conversion_dict['geom']['lenght']['km'] 
+        m_out = solutions.y[0]*conversion_dict['geom']['mass']['m_sol']  
         p_out = solutions.y[1] *conversion_dict['geom']['pressure']['cgs'] 
-            
+        
+        if (solutions.status != 1): # pressure is not negative, so we check if it goes under a certain value
+            for i,p in enumerate(p_out):
+                if  p/initial[1] < 1e-6 :
+                    r_out = r_out[:i]
+                    m_out = m_out[:i]
+                    p_out = p_out[:i]
+                    return r_out, m_out, p_out
+
         return r_out, m_out, p_out
 
-    def mass_vs_radius (self, eqs_type, central_pressures, max_step = None):
+    def mass_vs_radius (self, eqs_type, central_values):
         """
         Returns arrays containing the Mass and the Radius of the compact stars, given a range of central pressures.
         A couple of values (R,M) for eache pressure
 
         Parameters:
         ===========
-        central_pressures : array of float
-            central pressures
+        central_values : array of float
+            central pressures/densities
         eqs_type : string
             specify if we solve TOV or Newton eqs. Must be 'TOV' or 'Newton'
         -----------
         R_out, M_out : array of floats
-            (R,M) of the star for each given central pressure. 
-        """
-        #print("Solving ", eqs_type, " equations...")
-        final_pressure = central_pressures[-1]
-        
-        if self.eos.type == 'ImplicitEos' : 
-            # we change the default fermi energy momenta range for eos in order to surely include all the pressures
-            pressure_shifted = lambda x : self.eos.pressure_fermi_momentum(x) - final_pressure
-            x_p = bisection(pressure_shifted, 0, 1e3, int(1e4))
-            x_new = np.linspace(-int(x_p)-1, int(x_p)+1, 10000)
-            self.eos.set_x_range(x_new)
+            (R,M) of the star for each given central value. 
+        """        
+        R_star = np.empty_like(central_values)
+        M_star = np.empty_like(central_values)
 
-        R_star = np.empty_like(central_pressures)
-        M_star = np.empty_like(central_pressures)
-
-        for i, pc in enumerate(central_pressures):
-            r_star , m_star, p_star = self.structure_solver(eqs_type, pc, max_step)
+        for i, pc in enumerate(central_values):
+            r_star , m_star, p_star = self.structure_solver(eqs_type, pc)
             R_star[i] = r_star[-1]
             M_star[i] = m_star[-1]
 
         return R_star, M_star
 
-# END OF CompactStar class
+    def found_radius(self, t, y): # look here
+        """
+        Search when the pressure goes under a certain default value wrt the central pressure.
+
+        Parameters:
+        ===========
+        t : float
+            independent variable. 
+            Not used, but necessary to have the right signature required by 'solve_ivp'
+        y : float
+            dependent variables. 
+            y[0] -> mass
+            y[1] -> pressure
+        central_pressure : float
+            central pressure
+        """
+        return y[1] # check when pressure is negative
+            
+    def found_radius_implicit(self, t, y, central_value):
+        return y[1]/central_value - 1e-6
+
+
+    # END OF CompactStar class
 #===================================================================================#
 
-# External function used to find when pressure goes under a certain value
 
-def found_radius(t, y, central_pressure):
-    """
-    Search when the pressure goes under a certain default value wrt the central pressure.
-
-    Parameters:
-    ===========
-    t : float
-        independent variable. 
-        Not used, but necessary to have the right signature required by 'solve_ivp'
-    y : float
-        dependent variables. 
-        y[0] -> mass
-        y[1] -> pressure
-    """
-    return y[1]/central_pressure - 1e-6

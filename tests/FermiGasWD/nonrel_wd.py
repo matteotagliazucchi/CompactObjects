@@ -39,16 +39,16 @@ gamma = 5/3
 k = 3.309e-23 *(conversion_dict['cgs']['lenght']['m']**2)*(conversion_dict['cgs']['energy']['geom'])**(-2/3)
 p0 = 2.488e22 * conversion_dict['cgs']['pressure']['geom']
 
-eos = cobj.PolytropicEos(k, gamma)
+eos = cobj.PressureEdenPolytropic(k, gamma)
 
 wd = cobj.CompactStar(eos)
 wd.set_radii_range(np.linspace(1e-3, 5e7, int(1e6)))
 
-r_newton , m_newton, p_newton = wd.structure_solver('Newton', p0, max_step = 10)
+r_newton , m_newton, p_newton = wd.structure_solver('Newton', p0)
 R_newton = r_newton[-1]
 M_newton = m_newton[-1]
 
-r_tov , m_tov, p_tov = wd.structure_solver('TOV', p0, max_step = 10)
+r_tov , m_tov, p_tov = wd.structure_solver('TOV', p0)
 R_tov = r_tov[-1]
 M_tov = m_tov[-1]
 
@@ -63,6 +63,7 @@ print('=========================================================')
 # create a figure of m(r) and P(r)
 
 fig,ax = plt.subplots()
+plt.rc('font', family='monospace')
 plt.text(0.5, 1.07, "P(r) & m(r) of a non relativistic Fermi gas white dwarf",
          horizontalalignment='center',
          fontsize=12,
@@ -71,6 +72,7 @@ ax.plot(r_newton, p_newton, color="blue", linestyle="-", linewidth=1, label = 'P
 ax.plot(r_tov, p_tov, color="black", linestyle="-", linewidth=2,  label = 'P TOV')
 ax.set_xlabel('r [km]',fontsize=14)
 ax.set_ylabel(r'P [$dyne/cm^2$]', fontsize=14)
+ax.minorticks_on()
 
 ax2 = ax.twinx()
 ax2.plot(r_newton, m_newton,color="blue", linestyle=":", label = 'm Newton')
@@ -78,8 +80,10 @@ ax2.plot(r_tov, m_tov, color="black", linestyle="-.", label = 'm TOV')
 ax2.plot(R_newton, M_newton, marker = 'o', color='green', label='WD Newton mass')
 ax2.plot(R_tov, M_tov, marker = 'o', color='red', label='WD TOV mass')
 ax2.set_ylabel(r"m [$M_{\odot}$]",fontsize=14)
+ax2.minorticks_on()
 
 fig.legend(loc="upper center", bbox_to_anchor=(0.5,1), bbox_transform=ax.transAxes)
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'nrwd_mp-vs-r.png',
             format='png',
             dpi=1000)
@@ -96,12 +100,16 @@ R_star_newton, M_star_newton = wd.mass_vs_radius('Newton', pressures)
 # plot Mass-Radius
 
 fig,ax = plt.subplots()
+plt.rc('font', family='monospace')
 plt.title("Mass-Radius of a non relativistic Fermi gas WD")
 ax.plot(R_star_newton, M_star_newton, color="blue", linestyle="-.", linewidth=1, label = 'Newton')
 ax.plot(R_star_tov, M_star_tov, color="black", linestyle="-.", linewidth=2,  label = 'TOV')
 ax.set_xlabel('R [km]',fontsize=14)
 ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
-ax.legend(loc='upper right')
+ax.minorticks_on()
+
+fig.legend(loc='upper right')
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'nrwd_mass-vs-radius.png',
             format='png',
             dpi=1000)
@@ -109,20 +117,24 @@ fig.savefig(results_dir+'nrwd_mass-vs-radius.png',
 # plot Mass/Radius - central pressure 
 
 fig,ax = plt.subplots()
+plt.rc('font', family='monospace')
 plt.title("Mass/Radius vs Central Pressure in a non relativistic Fermi gas WD")
 ax.set_xscale('log')
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_newton, color="blue", linestyle="-.", linewidth=1, label = 'M-Newton')
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_tov, color="black", linestyle="-.", linewidth=2,  label = 'M-TOV')
 ax.set_xlabel('p0 [$dyne/cm^2$]',fontsize=14)
 ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
+ax.minorticks_on()
 
 ax2 = ax.twinx()
 ax2.set_xscale('log')
 ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_newton, color="blue", linestyle=":", linewidth=1, label = 'R-Newton')
 ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_tov, color="black", linestyle=":", linewidth=2,  label = 'R-TOV')
 ax2.set_ylabel(r"R [$km$]",fontsize=14)
+ax2.minorticks_on()
 
 fig.legend(loc='center right', bbox_to_anchor=(1,0.5), bbox_transform=ax.transAxes)
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'nonrelwd_mr-vs-p0.png',
             format='png',
             dpi=1000) 

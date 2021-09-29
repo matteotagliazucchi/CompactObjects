@@ -40,16 +40,16 @@ e0 = 7.463e39 * conversion_dict['cgs']['pressure']['geom']
 k = 1/(e0**(gamma -1))
 p0 = e0*1e-14
 
-eos = cobj.PolytropicEos(k, gamma)
+eos = cobj.PressureEdenPolytropic(k, gamma)
 
 wd = cobj.CompactStar(eos)
 wd.set_radii_range(np.linspace(1e-3, 5e7, int(1e6)))
 
-r_newton , m_newton, p_newton = wd.structure_solver('Newton', p0, max_step = 100)
+r_newton , m_newton, p_newton = wd.structure_solver('Newton', p0)
 R_newton = r_newton[-1]
 M_newton = m_newton[-1]
 
-r_tov , m_tov, p_tov = wd.structure_solver('TOV', p0, max_step = 100)
+r_tov , m_tov, p_tov = wd.structure_solver('TOV', p0)
 R_tov = r_tov[-1]
 M_tov = m_tov[-1]
 
@@ -72,6 +72,7 @@ ax.plot(r_newton, p_newton, color="blue", linestyle="-", linewidth=1, label = 'P
 ax.plot(r_tov, p_tov, color="black", linestyle="-", linewidth=2,  label = 'P TOV')
 ax.set_xlabel('r [km]',fontsize=14)
 ax.set_ylabel(r'P [$dyne/cm^2$]', fontsize=14)
+ax.minorticks_on()
 
 ax2 = ax.twinx()
 ax2.plot(r_newton, m_newton,color="blue", linestyle=":", label = 'm Newton')
@@ -79,8 +80,10 @@ ax2.plot(r_tov, m_tov, color="black", linestyle="-.", label = 'm TOV')
 ax2.plot(R_newton, M_newton, marker = 'o', color='green', label='WD Newton mass')
 ax2.plot(R_tov, M_tov, marker = 'o', color='red', label='WD TOV mass')
 ax2.set_ylabel(r"m [$M_{\odot}$]",fontsize=14)
+ax2.minorticks_on()
 
 fig.legend(loc="upper center", bbox_to_anchor=(0.5,1), bbox_transform=ax.transAxes)
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'relwd_mp-vs-r.png',
             format='png',
             dpi=1000)
@@ -91,8 +94,8 @@ p0_min = 1e24*conversion_dict['cgs']['pressure']['geom']
 p0_max = 2.5e26*conversion_dict['cgs']['pressure']['geom']
 pressures = np.linspace(p0_min, p0_max, 500)
 
-R_star_tov, M_star_tov = wd.mass_vs_radius('TOV', pressures, max_step = 100)
-R_star_newton, M_star_newton = wd.mass_vs_radius('Newton', pressures, max_step = 100)
+R_star_tov, M_star_tov = wd.mass_vs_radius('TOV', pressures)
+R_star_newton, M_star_newton = wd.mass_vs_radius('Newton', pressures)
 
 # plot Mass-Radius
 
@@ -101,7 +104,10 @@ plt.title("TOV Mass-Radius of a relativistic Fermi gas WD")
 ax.plot(R_star_tov, M_star_tov, color="black", linestyle="-.", linewidth=2,  label = 'TOV')
 ax.set_xlabel('R [km]',fontsize=14)
 ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
-ax.legend(loc='upper right')
+ax.minorticks_on()
+
+fig.legend(loc='upper right')
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'relwd_mass-vs-radius.png',
             format='png',
             dpi=1000)
@@ -111,6 +117,7 @@ fig.savefig(results_dir+'relwd_mass-vs-radius.png',
 fig,ax = plt.subplots()
 plt.title("Mass/Radius vs Central Pressure in a relativistic Fermi gas white dwarf")
 ax.set_xscale('log')
+ax.minorticks_on()
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_newton, color="blue", linestyle="-.", linewidth=1, label = 'M-Newton')
 ax.plot(pressures*conversion_dict['geom']['pressure']['cgs'], M_star_tov, color="black", linestyle="-.", linewidth=2,  label = 'M-TOV')
 ax.set_xlabel('p0 [$dyne/cm^2$]',fontsize=14)
@@ -118,11 +125,13 @@ ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
 
 ax2 = ax.twinx()
 ax2.set_xscale('log')
+ax2.minorticks_on()
 ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_newton, color="blue", linestyle=":", linewidth=1, label = 'R-Newton')
 ax2.plot(pressures*conversion_dict['geom']['pressure']['cgs'], R_star_tov, color="black", linestyle=":", linewidth=2,  label = 'R-TOV')
 ax2.set_ylabel(r"R [$km$]",fontsize=14)
 
 fig.legend(loc='center right', bbox_to_anchor=(1,0.5), bbox_transform=ax.transAxes)
+plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'relwd_mr-vs-p0.png',
             format='png',
             dpi=1000)
