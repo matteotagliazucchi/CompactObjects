@@ -5,9 +5,13 @@ A python package for studying astrophysical compact objects.
 ## Description
 
 For the moment the package solves Tolman-Oppenheimer-Volkoff or Newton structures equations in order to determine the Mass and the Radius of astrophysical compact objects, such as neutron stars or white dwarfs. In order to solve such equations one should provide a proper equation of state (eos) and a value for the central pressure of the star.
-The package works with two different type eos:
-1. simple monotropic function in the form $$P = K\cdot\varepsilon^\gamma$$, managed by the class `PolytropicEos` which allows to return the energy density $$\varepsilon$$ in function of the pressure $$P$$. This type of eos is useful to study the non relativistic limit of a Fermi gas of a pure neutron stars or to study both the relativistic and the non relativistic limit of a pure white dwarf.
-2. implicit form of the equations $$P = P(x)$$ and $$\varepsilon = \varepsilon(x)$$ where $$x$$ is the ratio between the Fermi momentum of the gas considered and $$m\cdot c$$, where $$m$$ is the mass of the particles of the gas. This case is managed by the class `ImplicitEos`, which generates a table of $$P$$ and $$\varepsilon$$ for a proper $$x$$ range. This class should be used for a pure neutron star in the full relativistic case, but also for the full relativistc case of a pure white dwarf. We can use this class also for studying neutron stars with the presence of protons and electrons.
+The package works with different type of eos:
+1. simple polytropic function in the form $$P = K\cdot\varepsilon^\gamma$$, managed by the class `PressureEdenPolytropic`. This type of eos is useful to study the non relativistic limit of a Fermi gas of a pure neutron stars or to study both the relativistic and the non relativistic limit of a pure white dwarf.
+2. implicit form of the equations $$P = P(x)$$ and $$\varepsilon = \varepsilon(x)$$ where $$x$$ is the ratio between the Fermi momentum of the gas considered and $$m\cdot c$$, where $$m$$ is the mass of the particles of the gas. This case is managed by the class `ImplicitEos`. This class should be used for a pure neutron star in the full relativistic case, but also for the full relativistc case of a pure white dwarf. We can use this class also for studying neutron stars with the presence of protons and electrons.
+3. simple polytropic function in the form $$P = K\cdot\rho^\gamma$$, managed by the class `PressureDensityPolytropic`. 
+4. piecewise polytropic eos, where we have a simple polytropic functions in each of the user defined range. This kind of eos are implemented in the class `PressureDensityPiecewise`
+
+The last two classes are used to study various piecewise polytropic eos's, classified by Read et al in [3].
 
 ## Prerequisites
 
@@ -61,14 +65,18 @@ once you have gone in the folder of the package `CompactObjects`
 You can also eliminate the dependences contained in `requirements.txt` with the same command. However before uninstalling, you should ensure that the packages are not dependencies for other existing packages.
 
 ## Usage
-See the folder 'tests' to see examples on how to use the package.
 
-The basic steps are:
-1. define an equation of state using `PolytropicEos` or `ImplicitEos`
-2. define a `CompactStar` object by passing the eos instance to the constructor of the class
-3. define a valure for the pressure at the center of the star. This value must be converted to geometrized units via the dictionary `conversion_dict['si']['pressure']['geom']` where the first 'si' can be replaced by 'cgs' i you want to provide the pressure in cgs units.
-4. use the method `CompactStar.structuresolver()` which returns the mass $$m$$ and the pressure $$P$$ of the star in function of the distance from the center of the star $$r$$. The last items of these three returned array are the pressure at the surface of the star (~0) and thus the radius and the mass of the star. By default radius are given in km, pressures in dyne/cm^2 and mass in solar masses.
-Then you can plot or do whatever you want.
+See the folder 'tests' to see examples on how to use the package. The various tests script show how to use all the classe:
+1. `nonrel_purens.py`, `nonrel_wd.py` and `rel_wd.py` use the eos class `PressureEdenPolytropic`
+2. `rel_purens.py` uses `ImplicitEos`
+3. `read_ns.py` basically uses `PressureDensityPiecewise`.
+
+All these scripts produces:
+- the profile m(r) and p(r) of the studied compact object in a particular value of the central pressure
+- the mass-vs-radius profile of the compact object
+- the mass-vs-central pressure and the radius-vs-centralpressure profile of the compact object
+
+Sometimes scripts produce both the classical curve (solving Newton structure equation) and those with relativistic effects (TOV equations). When it's not specified, they solve only TOV equations.
 
 
 ## How to run tests
@@ -82,10 +90,12 @@ or
 
 - `python rel_purens.py`
 
-Some results will be printed on the terminal, while plots will be available in the folder `NSOutput`
+Some results will be printed on the terminal, while plots will be available in the folder `NSOutput`.
+A similar procedure holds also for the other tests.
 
 ## References
 
 For the physics used in this package see 
 1. I. Sagert, M. Hempel, C. Greiner, J. Schaffner-Bielich; "*Compact Stars for Undergraduates*"; https://arxiv.org/abs/astro-ph/0506417v1
 2. R.R. Silbar, S. Reddy; "*Neutron stars for undergraduates*"; https://doi.org/10.1119/1.1703544
+3. J.S. Read, B.D. Lackey, B.J. Owen, J.L. Friedman; "*Constraints on a phenomenologically parametrized neutron-star equation of state*"; https://doi.org/10.1103/PhysRevD.79.124032
