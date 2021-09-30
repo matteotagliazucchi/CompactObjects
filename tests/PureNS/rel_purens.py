@@ -113,7 +113,7 @@ ax.set_xlabel('R [km]',fontsize=14)
 ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
 ax.minorticks_on()
 
-fig.legend(loc='upper right')
+fig.legend(loc='upper right',  bbox_to_anchor=(1,1))
 plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'relns_mass-vs-radius.pdf',
             format='pdf',

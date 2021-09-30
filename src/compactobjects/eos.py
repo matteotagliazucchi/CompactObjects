@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import CubicSpline
 from .utils import *
+#from .bisection import bisection
 
 ###################
 #   IMPLICIT EOS #
@@ -53,6 +54,17 @@ class ImplicitEos (object):
 
         self.eden_from_pressure = CubicSpline(self.p_column, self.e_column)
 
+    """
+    # version used by the article: it works as cubicspline but much slower
+    # to use this, replace line 55 with the following function and uncomment line 5
+
+    def eden_from_pressure (self, pressure): 
+        pressure_shifted = lambda x : self.pressure_fermi_momentum(x) - pressure
+        x_p = bisection(pressure_shifted, -100, 100, 10000)  # really slow
+        eden = self.energy_fermi_momentum(x_p)
+        return eden
+    """
+
     def eden_pressure_table (self, x_range):
         """
         Build p_column and e_column given a range of Fermi momenta 
@@ -62,7 +74,6 @@ class ImplicitEos (object):
         x_range : array of float
             array of Fermi momenta where compute p(x) and e(x) 
         """
-        print('Costruisco tabelle')
         e_column = self.energy_fermi_momentum(x_range)
         p_column = self.pressure_fermi_momentum(x_range)
         return p_column, e_column
