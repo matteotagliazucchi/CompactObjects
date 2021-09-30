@@ -9,7 +9,7 @@ from .utils import *
 ##################
 class ImplicitEos (object):
 
-    x_range = np.linspace(-1,1,int(10000))
+    x_range = np.linspace(0,1e3,int(100000))
 
     def __init__(self, energy_fermi_momentum, pressure_fermi_momentum):
 

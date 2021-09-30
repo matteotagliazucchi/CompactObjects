@@ -81,8 +81,8 @@ ax.minorticks_on()
 ax2 = ax.twinx()
 ax2.plot(r_newton, m_newton,color="blue", linestyle=":", label = 'm Newton')
 ax2.plot(r_tov, m_tov, color="black", linestyle="-.", label = 'm TOV')
-ax2.plot(R_newton, M_newton, marker = 'o', color='green', label='NS Newton mass')
-ax2.plot(R_tov, M_tov, marker = 'o', color='red', label='NS TOV mass')
+ax2.plot(R_newton, M_newton, marker = 'o', linestyle="", color='green', label='NS Newton mass')
+ax2.plot(R_tov, M_tov, marker = 'o', linestyle="", color='red', label='NS TOV mass')
 ax2.set_ylabel(r"m [$M_{\odot}$]",fontsize=10)
 ax2.minorticks_on()
 
@@ -113,7 +113,7 @@ ax.set_xlabel('R [km]',fontsize=14)
 ax.set_ylabel(r"M [$M_{\odot}$]", fontsize=14)
 ax.minorticks_on()
 
-fig.legend(loc='upper right',  bbox_to_anchor=(1,1))
+fig.legend(loc='upper right', bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 plt.rcParams["savefig.bbox"] = "tight"
 fig.savefig(results_dir+'relns_mass-vs-radius.pdf',
             format='pdf',
