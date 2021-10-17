@@ -29,7 +29,7 @@ def get_dense_eos(key):
     gamma3 = parameters[3]
 
     #transition densities -> tabulated in the article
-    trans1 = 2.8e14*conversion_dict['cgs']['density']['geom']
+    trans1 = 2.7e14*conversion_dict['cgs']['density']['geom']
     trans2 = (10**14.7)*conversion_dict['cgs']['density']['geom']
     trans3 = (10**15.0)*conversion_dict['cgs']['density']['geom']
 
@@ -58,7 +58,7 @@ def sly_eos():
     # in cgs
     k_SLy = [6.80110e-9, 1.06186e-6, 5.32697e1, 3.99874e-8] # polytropic constants
     gamma_SLy = [1.58425, 1.28733, 0.62223, 1.35692] # polytropic indices
-    transitions_SLy = [1.e4, 2.44034e7, 3.78358e11, 2.62780e12 ] # transition densities
+    transitions_SLy = [1.e3, 2.44034e7, 3.78358e11, 2.62780e12 ] # transition densities
 
     # we convert in geom
     k_SLy = [ (k_SLy[i] * conversion_dict['cgs']['lenght']['m']**(3*gamma_SLy[i] -1) 
