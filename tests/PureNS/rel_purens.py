@@ -106,7 +106,7 @@ R_star_newton, M_star_newton = ns.mass_vs_radius('Newton', p_range)
 
 fig,ax = plt.subplots()
 plt.rc('font', family='monospace')
-plt.title("Mass-Radius of a pure non relativistic NS")
+plt.title("Mass-Radius of a pure neutron star in the full relativistic case")
 ax.plot(R_star_newton, M_star_newton, color="blue", linestyle=":", linewidth=1, label = 'Newton')
 ax.plot(R_star_tov, M_star_tov, color="black", linestyle=":", linewidth=2,  label = 'TOV')
 ax.set_xlabel('R [km]',fontsize=14)
@@ -123,7 +123,7 @@ fig.savefig(results_dir+'relns_mass-vs-radius.pdf',
 
 fig,ax = plt.subplots()
 plt.rc('font', family='monospace')
-plt.title("Mass/Radius vs Central Pressure in a pure non relativistic NS")
+plt.title("Mass/Radius vs Central Pressure of a pure NS in the full relativistic case")
 ax.set_xscale('log')
 ax.minorticks_on()
 ax.plot(p_range*conversion_dict['geom']['pressure']['cgs'], M_star_newton, color="blue", linestyle="-.", linewidth=1, label = 'M-Newton')
